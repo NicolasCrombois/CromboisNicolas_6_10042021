@@ -1,5 +1,7 @@
 const bcrypt = require('bcrypt');
 const jsonwebtoken = require('jsonwebtoken');
+
+
 const User = require('../models/User');
 
 exports.signup = (req, res, next) => {
@@ -13,7 +15,7 @@ exports.signup = (req, res, next) => {
                 .then(() => res.status(201).json({
                     message: "Votre compte a bien été créé !"
                 }))
-                .catch(error => res.status(400).json({ error }))
+                .catch(error => res.status(400).json({ message : error }))
         })
         .catch(error => res.status(500).json({ error }));
 };
@@ -26,10 +28,10 @@ exports.login = (req, res, next) => {
                     error: "Le compte choisi n'existe pas !"
                 })
             }
-            bcrypt.compare(user.password, req.body.password)
+            bcrypt.compare(req.body.password, user.password)
                 .then( validation => {
                     if(!validation){
-                        return res.status(401).json({
+                        return res.status(405).json({
                             error: "Le mot de passe n'est pas correct !"
                         })
                     }
