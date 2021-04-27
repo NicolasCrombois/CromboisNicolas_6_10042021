@@ -1,18 +1,18 @@
+const editPathFile = require("../utils/editPathFile.js"); 
 const jsonwebtoken = require('jsonwebtoken');
 const fs = require('fs');
-
 
 const Sauce = require('../models/Sauce');
 
 exports.getSauces = (req, res, next) => {
     Sauce.find()
-        .then(sauces => res.status(200).json( sauces ))
+        .then(sauces => res.status(200).json( sauces.map((sauce) => editPathFile.customUrlImage( sauce, req ))))
         .catch(error => res.status(400).json({ error}));
 };
 
 exports.sauceId = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id})
-        .then(sauce => res.status(200).json( sauce ))
+        .then(sauce => res.status(200).json( editPathFile.customUrlImage( sauce, req ) ))
         .catch(error => res.status(400).json({ error}));
 };
 
@@ -31,7 +31,7 @@ exports.postSauce  = (req, res, next) => {
         usersLiked: [],
         usersDisliked: [],
         userId: sauceObject.userId,
-        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        imageUrl: `${req.file.filename}`
     })
     Sauce.updateMany(
         Sauce.find(),
@@ -57,14 +57,19 @@ exports.editSauce = (req, res, next) => {
             "description": sauceObject.description,
             "heat": sauceObject.heat,
             "mainPepper": sauceObject.mainPepper,
-            "imageUrl": `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+            "imageUrl": `${req.file.filename}`,
             _id: req.params.id
         };
-        /*Sauce.findOne({_id: req.params.id})
+
+
+
+        Sauce.findOne({_id: req.params.id})
             .then((sauce) => {
-                fs.unlink('images/' + sauce.imageUrl)
+                fs.unlinkSync(`./images/${sauce.imageUrl}`)
             })
-            .catch(error => res.status(400).json({ message: error }));*/
+
+
+
         Sauce.updateOne({_id: req.params.id}, { $set: queries})
             .then(() => res.status(200).json({ message: 'La sauce a bien été modifié !'}))
             .catch(error => res.status(400).json({ message: error }));
@@ -73,8 +78,15 @@ exports.editSauce = (req, res, next) => {
 
 exports.deleteSauce = (req, res, next) => {
     Sauce.deleteOne({ _id: req.params.id })
-        .then(() => res.status(200).json({ message: 'La sauce a été supprimé !'}))
+        .then((sauce) => {
+            
+            res.status(200).json({ message: 'La sauce a été supprimé !'})
+        })
         .catch(error => res.status(400).json({ error }));
+    Sauce.findOne({_id: req.params.id})
+        .then((sauce) => {
+            fs.unlinkSync(`./images/${sauce.imageUrl}`)
+        })
 }
 
 exports.likeSauce = (req, res, next) => {
