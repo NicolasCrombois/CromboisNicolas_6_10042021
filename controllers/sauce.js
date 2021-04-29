@@ -82,7 +82,7 @@ exports.deleteSauce = (req, res, next) => {
             
             res.status(200).json({ message: 'La sauce a été supprimé !'})
         })
-        .catch(error => res.status(400).json({ error }));
+        .catch(error => res.status(400).json({ message: error }));
     Sauce.findOne({_id: req.params.id})
         .then((sauce) => {
             fs.unlinkSync(`./images/${sauce.imageUrl}`)
@@ -134,6 +134,6 @@ exports.likeSauce = (req, res, next) => {
             .then(() => res.status(200).json({ message: 'Votre avis a bien été enregistré !'}))
             .catch(error => res.status(400).json({ message: error }));
         })
-        .catch(error => res.status(400).json({ error }))
+        .catch(error => res.status(400).json({ message: error }))
     
 }

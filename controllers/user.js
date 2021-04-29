@@ -17,7 +17,7 @@ exports.signup = (req, res, next) => {
                 }))
                 .catch(error => res.status(400).json({ message : error }))
         })
-        .catch(error => res.status(500).json({ error }));
+        .catch(error => res.status(500).json({ message: error }));
 };
 
 exports.login = (req, res, next) => {
@@ -25,7 +25,7 @@ exports.login = (req, res, next) => {
         .then(user => {
             if(!user){
                 return res.status(401).json({
-                    error: "Le compte choisi n'existe pas !"
+                    message: "Le compte choisi n'existe pas !"
                 })
             }
             bcrypt.compare(req.body.password, user.password)
@@ -44,7 +44,7 @@ exports.login = (req, res, next) => {
                         )
                     });
                 })
-                .catch(error => res.statuts(500).json({ error }));
+                .catch(error => res.statuts(500).json({ message: error }));
         })
-        .catch(error => res.statuts(500).json({ error }));
+        .catch(error => res.statuts(500).json({ message: error }));
 };
