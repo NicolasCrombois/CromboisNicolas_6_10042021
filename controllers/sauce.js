@@ -1,6 +1,7 @@
 const editPathFile = require("../utils/editPathFile.js"); 
 const jsonwebtoken = require('jsonwebtoken');
 const fs = require('fs');
+const xss = require('xss');
 
 const Sauce = require('../models/Sauce');
 
@@ -21,16 +22,16 @@ exports.postSauce  = (req, res, next) => {
     delete sauceObject._id;
     const sauce = new Sauce({
         ...sauceObject,
-        name: sauceObject.name,
-        manufacturer: sauceObject.manufacturer,
-        description: sauceObject.description,
-        heat: sauceObject.heat,
+        name: xss(sauceObject.name),
+        manufacturer: xss(sauceObject.manufacturer),
+        description: xss(sauceObject.description),
+        heat: xss(sauceObject.heat),
         likes: 0,
         dislikes: 0,
-        mainPepper: sauceObject.mainPepper,
+        mainPepper: xss(sauceObject.mainPepper),
         usersLiked: [],
         usersDisliked: [],
-        userId: sauceObject.userId,
+        userId: xss(sauceObject.userId),
         imageUrl: `${req.file.filename}`
     })
     Sauce.updateMany(
@@ -46,17 +47,24 @@ exports.postSauce  = (req, res, next) => {
 
 exports.editSauce = (req, res, next) => {
     if(!req.file){
-        Sauce.updateOne({ _id: req.params.id}, {...req.body, _id: req.params.id})
+        Sauce.updateOne({ _id: req.params.id}, {
+            name : xss(req.body.name),
+            manufacturer : xss(req.body.manufacturer),
+            description: xss(req.body.description),
+            mainPepper : xss(req.body.mainPepper),
+            heat : xss(req.body.heat),
+            _id: req.params.id})
+
             .then(() => res.status(200).json({ message: 'La sauce a bien été modifié !'}))
             .catch(error => res.status(400).json({ message: error }));
     }else{
         const sauceObject = JSON.parse(req.body.sauce);
         var queries = {
-            "name": sauceObject.name,
-            "manufacturer": sauceObject.manufacturer,
-            "description": sauceObject.description,
-            "heat": sauceObject.heat,
-            "mainPepper": sauceObject.mainPepper,
+            "name": xss(sauceObject.name),
+            "manufacturer": xss(sauceObject.manufacturer),
+            "description": xss(sauceObject.description),
+            "heat": xss(sauceObject.heat),
+            "mainPepper": xss(sauceObject.mainPepper),
             "imageUrl": `${req.file.filename}`,
             _id: req.params.id
         };

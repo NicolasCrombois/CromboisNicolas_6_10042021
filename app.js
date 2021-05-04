@@ -14,6 +14,7 @@ const sauceRoute = require('./routes/sauce');
 
 var expiryDate = new Date(Date.now() + 60 * 60 * 1000)
 
+
 mongoose.connect('mongodb+srv://CromboisDev:hT2TmW6SQ6k8ZGd2@cluster-eu.t8nsf.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
   { useNewUrlParser: true,
     useUnifiedTopology: true })

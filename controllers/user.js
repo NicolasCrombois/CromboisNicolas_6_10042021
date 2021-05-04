@@ -1,14 +1,16 @@
 const bcrypt = require('bcrypt');
 const jsonwebtoken = require('jsonwebtoken');
+const xss = require('xss');
 
 
 const User = require('../models/User');
 
+
 exports.signup = (req, res, next) => {
-    bcrypt.hash(req.body.password,10)
+    bcrypt.hash(xss(req.body.password),10)
         .then(hash => {
             const user = new User({
-                email: req.body.email,
+                email : xss(req.body.email),
                 password : hash
             });
             user.save()
@@ -21,14 +23,14 @@ exports.signup = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
-    User.findOne({email: req.body.email})
+    User.findOne({email: xss(req.body.email)})
         .then(user => {
             if(!user){
                 return res.status(401).json({
                     message: "Le compte choisi n'existe pas !"
                 })
             }
-            bcrypt.compare(req.body.password, user.password)
+            bcrypt.compare(xss(req.body.password), user.password)
                 .then( validation => {
                     if(!validation){
                         return res.status(405).json({
