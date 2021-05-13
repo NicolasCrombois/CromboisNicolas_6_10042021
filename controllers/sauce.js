@@ -34,12 +34,6 @@ exports.postSauce  = (req, res, next) => {
         userId: xss(sauceObject.userId),
         imageUrl: `${req.file.filename}`
     })
-    Sauce.updateMany(
-        Sauce.find(),
-        {"$set":{"likes": 0, "dislikes" : 0, "usersDisliked": [], "usersLiked": []}},
-        {},
-        (err, writeResult) => {}
-    );
     sauce.save()
         .then(() => res.status(201).json({ message : "La sauce a bien été ajouté" }))
         .catch(error => res.status(400).json({ message: error}));
