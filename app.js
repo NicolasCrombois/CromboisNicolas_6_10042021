@@ -1,5 +1,7 @@
+
 const host = 'http://localhost:3000/';
 
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -9,13 +11,14 @@ const helmet = require('helmet');
 const cookieSession = require('cookie-session');
 const passwordValidator = require('password-validator');
 
+
 const userRoute = require('./routes/user');
 const sauceRoute = require('./routes/sauce');
 
 var expiryDate = new Date(Date.now() + 60 * 60 * 1000)
 
 
-mongoose.connect('mongodb+srv://CromboisDev:hT2TmW6SQ6k8ZGd2@cluster-eu.t8nsf.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
+mongoose.connect( process.env.CONNECTION_DB,
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
