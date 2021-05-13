@@ -34,6 +34,7 @@ exports.postSauce  = (req, res, next) => {
         userId: xss(sauceObject.userId),
         imageUrl: `${req.file.filename}`
     })
+
     sauce.save()
         .then(() => res.status(201).json({ message : "La sauce a bien été ajouté" }))
         .catch(error => res.status(400).json({ message: error}));
@@ -63,14 +64,10 @@ exports.editSauce = (req, res, next) => {
             _id: req.params.id
         };
 
-
-
         Sauce.findOne({_id: req.params.id})
             .then((sauce) => {
                 fs.unlinkSync(`./images/${sauce.imageUrl}`)
             })
-
-
 
         Sauce.updateOne({_id: req.params.id}, { $set: queries})
             .then(() => res.status(200).json({ message: 'La sauce a bien été modifié !'}))
@@ -79,16 +76,16 @@ exports.editSauce = (req, res, next) => {
 };
 
 exports.deleteSauce = (req, res, next) => {
+    Sauce.findOne({_id: req.params.id})
+        .then((sauce) => {
+            fs.unlinkSync(`./images/${sauce.imageUrl}`);
+        })
+        .catch(error => res.status(400).json({ message: error }));
     Sauce.deleteOne({ _id: req.params.id })
         .then((sauce) => {
-            
             res.status(200).json({ message: 'La sauce a été supprimé !'})
         })
         .catch(error => res.status(400).json({ message: error }));
-    Sauce.findOne({_id: req.params.id})
-        .then((sauce) => {
-            fs.unlinkSync(`./images/${sauce.imageUrl}`)
-        })
 }
 
 exports.likeSauce = (req, res, next) => {
