@@ -15,7 +15,7 @@
     "dotenv": "^9.0.2",
     "express": "^4.17.1",
     "fs": "*",
-    "helmet": "^4.5.0",
+    "helmet": "^4.6.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.3",
     "mongoose-unique-validator": "^2.0.3",
